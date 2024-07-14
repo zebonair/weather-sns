@@ -10,4 +10,5 @@ public class WeatherSnsApplication {
 		SpringApplication.run(WeatherSnsApplication.class, args);
 	}
 
+	//testing MR pipeline
 }
