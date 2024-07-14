@@ -3,23 +3,28 @@ name: Build and Lint
 on:
   push:
     branches:
-      - main  # Adjust to your main branch name
+      - main
   pull_request:
     branches:
-      - main  # Adjust to your main branch name
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
     
     steps:
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+    
     - name: Checkout code
       uses: actions/checkout@v2
       
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        java-version: '17'  # Adjust to your Java version
+        java-version: '17'
 
     - name: Build with Gradle
       run: |
@@ -34,6 +39,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: build-artifacts
-        path: build/libs/*.jar  # Adjust to your build artifact location
-
-  # Add more jobs as needed, e.g., testing, deployment steps
+        path: build/libs/*.jar
