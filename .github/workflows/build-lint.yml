@@ -1,0 +1,39 @@
+name: Build and Lint
+
+on:
+  push:
+    branches:
+      - main  # Adjust to your main branch name
+  pull_request:
+    branches:
+      - main  # Adjust to your main branch name
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'  # Adjust to your Java version
+
+    - name: Build with Gradle
+      run: |
+        ./gradlew clean build
+
+    - name: Run Linter (if applicable)
+      run: |
+        # Replace with your linter command (e.g., eslint, lint, etc.)
+        # Example for Java: ./gradlew check
+        
+    - name: Archive Build Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-artifacts
+        path: build/libs/*.jar  # Adjust to your build artifact location
+
+  # Add more jobs as needed, e.g., testing, deployment steps
