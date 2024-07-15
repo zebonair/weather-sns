@@ -11,36 +11,31 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Setup Node
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-    
-    - name: Checkout code
-      uses: actions/checkout@v2
-      
-    - name: Set up JDK
-      uses: actions/setup-java@v2
-      with:
-        java-version: '17'
-        distribution: 'adopt' 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
 
-    - name: Grant execute permission to Gradle wrapper
-      run: chmod +x ./gradlew
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Build with Gradle
-      run: |
-        ./gradlew clean build
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'adopt'
 
-    - name: Run Linter (if applicable)
-      run: |
-        # Replace with your linter command (e.g., eslint, lint, etc.)
-        # Example for Java: ./gradlew check
-        
-    - name: Archive Build Artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: build-artifacts
-        path: build/libs/*.jar
+      - name: Grant execute permission to Gradle wrapper
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: |
+          ./gradlew clean build
+
+      - name: Archive Build Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifacts
+          path: build/libs/*.jar
