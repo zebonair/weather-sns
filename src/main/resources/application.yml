@@ -1,0 +1,21 @@
+app:
+  name: Weather Notification Service
+  description: A service to notify users about extreme weather conditions.
+  version: 0.0.1-SNAPSHOT
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+weather:
+  api:
+    url: http://api.weatherapi.com/v1/current.json
+    key: f9fa449e3a704ade977115958241507
+
+logging:
+  level:
+    root: INFO
+    com.weathernotification: DEBUG
+  file:
+    name: logs/weather-sns.log

@@ -1,4 +1,4 @@
-name: Build and Lint
+name: Lint and Build Check
 
 on:
   push:
@@ -20,6 +20,8 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK
         uses: actions/setup-java@v2
@@ -29,6 +31,9 @@ jobs:
 
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
+
+      - name: Lint with Spotless
+        run: ./gradlew spotlessCheck
 
       - name: Build with Gradle
         run: |
