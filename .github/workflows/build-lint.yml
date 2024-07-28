@@ -13,6 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set up environment variables
+        run: |
+          echo "GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}" >> $GITHUB_ENV
+          echo "GCP_SECRET_NAME=${{ secrets.GCP_SECRET_NAME }}" >> $GITHUB_ENV
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
