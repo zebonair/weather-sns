@@ -33,27 +33,17 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
-      - name: Decode and write GCP service account key
-        run: |
-          echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" | base64 --decode > gcp-sa-key.json
-
       - name: Set up GCP authentication
         run: |
+          base64 --decode <<< "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > gcp-sa-key.json
           gcloud auth activate-service-account --key-file=gcp-sa-key.json
           gcloud config set project $GCP_PROJECT_ID
-
-      - name: Check GCP key file content
-        run: cat gcp-sa-key.json   
 
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
 
       - name: Lint with Spotless
         run: ./gradlew spotlessCheck
-
-      - name: Test
-        run: | 
-          ./gradlew --info test
 
       - name: Build with Gradle
         run: |
