@@ -1,4 +1,4 @@
-name: Lint and Build Check
+name: Test Check
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     env:
       GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
@@ -42,15 +42,5 @@ jobs:
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
 
-      - name: Lint with Spotless
-        run: ./gradlew spotlessCheck
-
-      - name: Build with Gradle
-        run: |
-          ./gradlew clean build -x test
-
-      - name: Archive Build Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: build-artifacts
-          path: build/libs/*.jar
+      - name: Run Tests with Gradle
+        run: ./gradlew test
