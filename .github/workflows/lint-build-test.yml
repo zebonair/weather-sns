@@ -1,4 +1,4 @@
-name: Lint and Build Check
+name: lint-build-test.ym
 
 on:
   push:
@@ -54,3 +54,46 @@ jobs:
         with:
           name: build-artifacts
           path: build/libs/*.jar
+
+  tests:
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      GCP_SECRET_NAME: ${{ vars.GCP_SECRET_NAME }}
+      GOOGLE_APPLICATION_CREDENTIALS: gcp-sa-key.json
+
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Set up GCP authentication
+        run: |
+          base64 --decode <<< "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > gcp-sa-key.json
+          gcloud auth activate-service-account --key-file=gcp-sa-key.json
+          gcloud config set project $GCP_PROJECT_ID
+
+      - name: Grant execute permission to Gradle wrapper
+        run: chmod +x ./gradlew
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts
+          path: build/libs
+
+      - name: Run Tests with Gradle
+        run: ./gradlew test
