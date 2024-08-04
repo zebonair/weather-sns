@@ -8,13 +8,10 @@ server:
   servlet:
     context-path: /api
 
-gcp:
-  projectId: ${GCP_PROJECT_ID}
-  secretName: ${GCP_SECRET_NAME}
-
-weather:
-  api:
-    url: http://api.weatherapi.com/v1/current.json
+weather-api:
+  key: ${WEATHER_API_KEY}
+  url:
+    current: http://api.weatherapi.com/v1/current.json
 
 logging:
   level:

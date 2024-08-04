@@ -12,9 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
-      GCP_SECRET_NAME: ${{ vars.GCP_SECRET_NAME }}
-      GOOGLE_APPLICATION_CREDENTIALS: gcp-sa-key.json
+      WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
 
     steps:
       - name: Setup Node
@@ -32,12 +30,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-
-      - name: Set up GCP authentication
-        run: |
-          base64 --decode <<< "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > gcp-sa-key.json
-          gcloud auth activate-service-account --key-file=gcp-sa-key.json
-          gcloud config set project $GCP_PROJECT_ID
 
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
@@ -59,9 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     env:
-      GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
-      GCP_SECRET_NAME: ${{ vars.GCP_SECRET_NAME }}
-      GOOGLE_APPLICATION_CREDENTIALS: gcp-sa-key.json
+      WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
 
     steps:
       - name: Setup Node
@@ -79,12 +69,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-
-      - name: Set up GCP authentication
-        run: |
-          base64 --decode <<< "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > gcp-sa-key.json
-          gcloud auth activate-service-account --key-file=gcp-sa-key.json
-          gcloud config set project $GCP_PROJECT_ID
 
       - name: Grant execute permission to Gradle wrapper
         run: chmod +x ./gradlew
