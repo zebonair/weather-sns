@@ -1,7 +1,7 @@
 --src\main\resources\sql\create_notifications_table.sql
 
 -- Create table
-CREATE TABLE notifications (
+CREATE TABLE IF NOT EXISTS notifications (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     message TEXT NOT NULL,

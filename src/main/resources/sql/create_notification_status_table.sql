@@ -1,7 +1,7 @@
 --src\main\resources\sql\create_notification_status_table.sql
 
 -- Create table
-CREATE TABLE notification_status (
+CREATE TABLE IF NOT EXISTS notification_status (
     id SERIAL PRIMARY KEY,
     status VARCHAR(50) UNIQUE NOT NULL
 );

@@ -1,11 +1,14 @@
 #!/bin/bash
 
+# HOW TO EXECUTE MIGRATION FILES:
+# First manually export the database password wit this command
+# export PGPASSWORD="yourDBpassword"
+# and then execute the script from within the weather-sns directory ./scripts/db_migration_script.sh
+
 # Define database connection details with prompt
 read -p "Enter the database name: " DB_NAME
 read -p "Enter the database user : " DB_USER
 read -p "Enter the database host [default localhost]: " DB_HOST
-read -sp "Enter the database password: " DB_PASSWORD
-echo # for a newline after the password input
 read -p "Enter the database port [default 5432]: " DB_PORT
 
 # Set default values if not provided
@@ -16,11 +19,10 @@ DB_PORT=${DB_PORT:-5432}
 export DB_NAME
 export DB_USER
 export DB_HOST
-export DB_PASSWORD
 export DB_PORT
 
 # Path to SQL files
-SQL_DIR="src/main/resources/sql" # whole path
+SQL_DIR="src/main/resources/sql" 
 
 # Check for SQL directory
 if [ ! -d "$SQL_DIR" ]; then
@@ -29,7 +31,7 @@ if [ ! -d "$SQL_DIR" ]; then
 fi
 
 # List of SQL files to execute
-SQL_FILES=("create_users_table.sql" "create_notification_status_table.sql" create_notifications_table.sql)
+SQL_FILES=("create_users_table.sql" "create_notification_status_table.sql" "create_notifications_table.sql")
 
 
 # Loop through and execute each SQL file
@@ -40,5 +42,3 @@ do
 done
 
 echo "All SQL files executed."
-
-unset DB_PASSWORD
