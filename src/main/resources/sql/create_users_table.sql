@@ -7,13 +7,11 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     location VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    is_deleted BOOLEAN DEFAULT FALSE
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE
 );
 
--- Trigger function to update 'updated_at' on row update
-CREATE OR REPLACE FUNCTION update_updated_at_column()
+CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
     NEW.updated_at = CURRENT_TIMESTAMP;
@@ -21,8 +19,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger that calls the above function before each update
-CREATE TRIGGER update_user_updated_at
+CREATE TRIGGER update_timestamp_trigger
 BEFORE UPDATE ON users
 FOR EACH ROW
-EXECUTE FUNCTION update_updated_at_column();
+EXECUTE FUNCTION set_updated_at();
