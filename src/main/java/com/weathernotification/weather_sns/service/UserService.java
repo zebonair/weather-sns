@@ -7,6 +7,7 @@ import com.weathernotification.weather_sns.model.UserVM;
 import com.weathernotification.weather_sns.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -15,15 +16,21 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
-    public User createUser(User user) {
+    public UserVM createUser(User user) {
         validateUser(user);
-        return userRepository.save(user);
+        hashPassword(user);
+        userRepository.save(user);
+
+        return toUserVM(user);
     }
 
     @Transactional
@@ -35,6 +42,11 @@ public class UserService {
         return userRepository
                 .findById(id)
                 .orElseThrow(() -> new ServiceException(ErrorCode.USER_NOT_FOUND, id));
+    }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ServiceException(ErrorCode.USER_NOT_FOUND_USERNAME, username));
     }
 
     @Transactional
@@ -52,8 +64,8 @@ public class UserService {
                 && !userDetails.getUsername().equals(user.getUsername())) {
             user.setUsername(userDetails.getUsername());
         }
-        if (userDetails.getPassword() != null
-                && !userDetails.getPassword().equals(user.getPassword())) {
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+            hashPassword(userDetails);
             user.setPassword(userDetails.getPassword());
         }
         if (userDetails.getEmail() != null && !userDetails.getEmail().equals(user.getEmail())) {
@@ -81,6 +93,11 @@ public class UserService {
 
     private UserVM toUserVM(User user) {
         return new UserVM(user.getUsername(), user.getEmail(), user.getLocation());
+    }
+
+    private void hashPassword(User user) {
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
     }
 
     private void validateUser(User user) {

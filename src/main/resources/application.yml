@@ -17,14 +17,17 @@ logging:
   level:
     root: INFO
     com.weathernotification: DEBUG
+    org:
+      springframework:
+        security: DEBUG
   file:
     name: logs/weather-sns.log
 
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/weather_sns_db
+    username: wsns_admin
+    password: Cloud2024/
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
