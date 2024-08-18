@@ -25,9 +25,9 @@ logging:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/weather_sns_db
-    username: wsns_admin
-    password: Cloud2024/
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

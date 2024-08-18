@@ -45,8 +45,10 @@ public class UserService {
     }
 
     public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new ServiceException(ErrorCode.USER_NOT_FOUND_USERNAME, username));
+        return userRepository
+                .findByUsername(username)
+                .orElseThrow(
+                        () -> new ServiceException(ErrorCode.USER_NOT_FOUND_USERNAME, username));
     }
 
     @Transactional

@@ -17,7 +17,7 @@ public enum ErrorCode {
     DUPLICATE_EMAIL("ERR008", "E-mail address already in use.", HttpStatus.CONFLICT),
     DUPLICATE_USERNAME("ERR009", "Username already in use.", HttpStatus.CONFLICT),
     USER_NOT_FOUND_USERNAME("ERR010", "User not found with username %s", HttpStatus.BAD_REQUEST),
-    INVALID_CREDENTIALS("ERR011", "Invalid Credentals.", HttpStatus.UNAUTHORIZED);
+    INVALID_CREDENTIALS("ERR011", "Invalid Credentials.", HttpStatus.UNAUTHORIZED);
 
     private final String code;
     private final String message;
