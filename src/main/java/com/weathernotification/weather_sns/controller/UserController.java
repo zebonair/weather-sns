@@ -35,9 +35,9 @@ public class UserController {
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User user = userService.getUserById(id);
+    @GetMapping("/{username}")
+    public ResponseEntity<UserVM> getUserByUsername(@PathVariable String username) {
+        UserVM user = userService.getUserByUsername(username);
         return ResponseEntity.ok(user);
     }
 

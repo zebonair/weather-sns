@@ -4,6 +4,7 @@ import com.weathernotification.weather_sns.exception.ErrorCode;
 import com.weathernotification.weather_sns.exception.ServiceException;
 import com.weathernotification.weather_sns.security.LoginRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Base64;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,9 +38,11 @@ public class AuthController {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            String sessionId = request.getSession().getId();
+            String credentials = loginRequest.getUsername() + ":" + loginRequest.getPassword();
+            String encodedCredentials = Base64.getEncoder().encodeToString(credentials.getBytes());
 
-            return ResponseEntity.ok(Map.of("message", "Login successful", "sessionId", sessionId));
+            return ResponseEntity.ok(
+                    Map.of("message", "Login successful", "token", encodedCredentials));
         } catch (BadCredentialsException e) {
             throw new ServiceException(ErrorCode.INVALID_CREDENTIALS);
         }

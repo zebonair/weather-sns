@@ -1,18 +1,24 @@
 package com.weathernotification.weather_sns.config;
 
 import com.weathernotification.weather_sns.service.CustomUserDetailsService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-// import org.springframework.security.config.Customizer;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -25,22 +31,9 @@ public class SecurityConfig {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-    // @Bean
-    // public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    //     http.csrf(httpSecurityCsrfConfigurer -> {httpSecurityCsrfConfigurer.disable();});
-    //     http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated());
-
-    //     http.httpBasic(Customizer.withDefaults());
-
-    //     return http.build();
-    // }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(
-                httpSecurityCsrfConfigurer -> {
-                    httpSecurityCsrfConfigurer.disable();
-                });
+        http.csrf(AbstractHttpConfigurer::disable);
         return http.authorizeHttpRequests(
                         registry -> {
                             registry.requestMatchers(
@@ -48,19 +41,33 @@ public class SecurityConfig {
                                     .permitAll();
                             registry.anyRequest().authenticated();
                         })
-                .formLogin(
-                        formLogin ->
-                                formLogin
-                                        .loginProcessingUrl("/auth/login")
-                                        .defaultSuccessUrl("/home", true))
-                .logout(
-                        logout ->
-                                logout.logoutUrl("/auth/logout")
-                                        .logoutSuccessUrl("/auth/login?logout"))
+                // Disabling spring login for now and going with basic auth.
+                // Maybe implement JWT OAuth in the future.
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(Customizer.withDefaults())
+                .exceptionHandling(
+                        exception ->
+                                exception.authenticationEntryPoint(
+                                        new AuthenticationEntryPoint() {
+                                            @Override
+                                            public void commence(
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response,
+                                                    AuthenticationException authException)
+                                                    throws IOException {
+                                                response.setStatus(
+                                                        HttpServletResponse.SC_UNAUTHORIZED);
+                                                response.setContentType("application/json");
+                                                response.getWriter()
+                                                        .write(
+                                                                "{\"error\": \"Unauthorized access."
+                                                                        + " Invalid Token.\"}");
+                                            }
+                                        }))
                 .sessionManagement(
                         sessionManagement ->
                                 sessionManagement.sessionCreationPolicy(
-                                        SessionCreationPolicy.ALWAYS))
+                                        SessionCreationPolicy.IF_REQUIRED))
                 .build();
     }
 

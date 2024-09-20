@@ -5,10 +5,13 @@ import com.weathernotification.weather_sns.exception.ServiceException;
 import com.weathernotification.weather_sns.model.User;
 import com.weathernotification.weather_sns.model.UserVM;
 import com.weathernotification.weather_sns.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Service
@@ -33,22 +36,30 @@ public class UserService {
         return toUserVM(user);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public User getUserById(Long id) {
         if (id == null) {
             throw new ServiceException(ErrorCode.ID_MISSING);
         }
-
         return userRepository
                 .findById(id)
                 .orElseThrow(() -> new ServiceException(ErrorCode.USER_NOT_FOUND, id));
     }
 
-    public User getUserByUsername(String username) {
-        return userRepository
-                .findByUsername(username)
-                .orElseThrow(
-                        () -> new ServiceException(ErrorCode.USER_NOT_FOUND_USERNAME, username));
+    @Transactional(readOnly = true)
+    public UserVM getUserByUsername(String username) {
+        if (username == null) {
+            throw new ServiceException(ErrorCode.USERNAME_MISSING);
+        }
+        authorizeUserAccess(username);
+        User user =
+                userRepository
+                        .findByUsername(username)
+                        .orElseThrow(
+                                () ->
+                                        new ServiceException(
+                                                ErrorCode.USER_NOT_FOUND_USERNAME, username));
+        return toUserVM(user);
     }
 
     @Transactional
@@ -119,5 +130,21 @@ public class UserService {
         if (!StringUtils.hasText(user.getLocation())) {
             throw new ServiceException(ErrorCode.LOCATION_MISSING);
         }
+    }
+
+    private void authorizeUserAccess(String requestUser) {
+        String currentUser = getCurrentUser();
+
+        if (!requestUser.equals(currentUser)) {
+            throw new ServiceException(ErrorCode.ACCESS_DENIED);
+        }
+    }
+
+    private String getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            return authentication.getName();
+        }
+        throw new ServiceException(ErrorCode.ACCESS_DENIED);
     }
 }

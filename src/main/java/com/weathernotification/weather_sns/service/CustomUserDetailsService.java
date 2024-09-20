@@ -2,9 +2,8 @@ package com.weathernotification.weather_sns.service;
 
 import com.weathernotification.weather_sns.model.User;
 import com.weathernotification.weather_sns.repository.UserRepository;
-import java.util.List;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import com.weathernotification.weather_sns.security.CustomUserDetails;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,6 +13,9 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
+
+    @Value("${roles.admin.usernames}")
+    private String adminUsernames;
 
     public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -27,11 +29,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                         .orElseThrow(
                                 () -> new UsernameNotFoundException("User not found: " + username));
 
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(), user.getPassword(), authorities);
-
-        // return new CustomUserDetails(user);
+        return new CustomUserDetails(user, adminUsernames);
     }
 }
