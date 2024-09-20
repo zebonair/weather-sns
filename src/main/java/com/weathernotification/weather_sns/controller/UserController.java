@@ -29,15 +29,15 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        User createdUser = userService.createUser(user);
+    @PostMapping("/register")
+    public ResponseEntity<UserVM> createUser(@Valid @RequestBody User user) {
+        UserVM createdUser = userService.createUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User user = userService.getUserById(id);
+    @GetMapping("/{username}")
+    public ResponseEntity<UserVM> getUserByUsername(@PathVariable String username) {
+        UserVM user = userService.getUserByUsername(username);
         return ResponseEntity.ok(user);
     }
 

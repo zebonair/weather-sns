@@ -15,7 +15,14 @@ public enum ErrorCode {
     PASSWORD_MISSING("ERR006", "Password is missing", HttpStatus.BAD_REQUEST),
     LOCATION_MISSING("ERR007", "Location is missing", HttpStatus.BAD_REQUEST),
     DUPLICATE_EMAIL("ERR008", "E-mail address already in use.", HttpStatus.CONFLICT),
-    DUPLICATE_USERNAME("ERR009", "Username already in use.", HttpStatus.CONFLICT);
+    DUPLICATE_USERNAME("ERR009", "Username already in use.", HttpStatus.CONFLICT),
+    USER_NOT_FOUND_USERNAME("ERR010", "User not found with username %s", HttpStatus.BAD_REQUEST),
+    INVALID_CREDENTIALS("ERR011", "Invalid Credentials.", HttpStatus.UNAUTHORIZED),
+    ACCESS_DENIED("ERR012", "Access denied. You are not authorized.", HttpStatus.FORBIDDEN),
+    USER_NOT_AUTHENTICATED(
+            "ERR013",
+            "User is not authenticated. Please log in to continue.",
+            HttpStatus.UNAUTHORIZED);
 
     private final String code;
     private final String message;

@@ -19,28 +19,18 @@ repositories {
 }
 
 spotless {
-// optional: limit format enforcement to just the files changed by this feature branch
 	ratchetFrom 'origin/main'
 
 	format 'misc', {
-		// define the files to apply `misc` to
 		target '*.gradle', '.gitattributes', '.gitignore'
 
-		// define the steps to apply to those files
 		trimTrailingWhitespace()
-		indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
+		indentWithTabs()
 		endWithNewline()
 	}
 	java {
-		// don't need to set target, it is inferred from java
-
-		// apply a specific flavor of google-java-format
 		googleJavaFormat('1.22.0').aosp().reflowLongStrings().skipJavadocFormatting()
-		// fix formatting of type annotations
 		formatAnnotations()
-		// make sure every file has the following copyright header.
-		// optionally, Spotless can set copyright years by digging
-		// through git history (see "license" section below)
 	}
 }
 
@@ -48,11 +38,13 @@ dependencies {
 	implementation 'javax.validation:validation-api:1.0.0.GA'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-core'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.kafka:spring-kafka'
-	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'com.google.cloud:google-cloud-secretmanager:2.46.0'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.postgresql:postgresql'
 
@@ -62,7 +54,7 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
 	useJUnitPlatform()
 }
 

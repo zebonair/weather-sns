@@ -17,6 +17,9 @@ logging:
   level:
     root: INFO
     com.weathernotification: DEBUG
+    org:
+      springframework:
+        security: DEBUG
   file:
     name: logs/weather-sns.log
 
@@ -33,3 +36,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+roles:
+  admin:
+    usernames: wsns_admin
