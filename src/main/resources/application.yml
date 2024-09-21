@@ -1,6 +1,6 @@
 app:
-  name: Weather Notification Service
-  description: A service to notify users about extreme weather conditions.
+  name: Weather-SNS
+  description: A simple notification service that notifies users about upcoming weather conditions.
   version: 0.0.1-SNAPSHOT
 
 server:
@@ -36,6 +36,24 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+management:
+  info:
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+info:
+  app:
+    name: ${app.name}
+    description: ${app.description}
+    version: ${app.version}
+  developer:
+    name: Emir Muratčauš
+    email: emir.muratcaus97@gmail.com
 
 roles:
   admin:

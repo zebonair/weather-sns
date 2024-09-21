@@ -37,7 +37,10 @@ public class SecurityConfig {
         return http.authorizeHttpRequests(
                         registry -> {
                             registry.requestMatchers(
-                                            "/users/register", "/auth/login", "/auth/logout")
+                                            "/users/register",
+                                            "/auth/login",
+                                            "/auth/logout",
+                                            "/actuator/**")
                                     .permitAll();
                             registry.anyRequest().authenticated();
                         })
