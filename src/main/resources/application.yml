@@ -58,3 +58,8 @@ info:
 roles:
   admin:
     usernames: wsns_admin
+
+kafka:
+  topic:
+    weather-update: weather-update
+  bootstrapAddress: localhost:9092
